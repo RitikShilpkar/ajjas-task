@@ -2,12 +2,7 @@ import { useState } from "react";
 import "./CommentsList.css";
 import { CommentReply } from "../commentReply/CommentReply";
 
-
-// 
-
 export const CommentsList = ({ comments, setComments }) => {
-
-    
  
   if (!comments.length) {
     return <>No comments</>
@@ -26,10 +21,8 @@ export const CommentsList = ({ comments, setComments }) => {
                   <ul key={idx}>
                     {" "}
                     {Boolean(comment.replies) &&
-                      comment.replies.map((reply, index) => {
-                        return <div> 
-                              <CommentReply key={index} idx={index} setComments={setComments} comments={comments} reply={reply} comment={comment}/>
-                            </div>;
+                      comment.replies.map((reply) => {
+                        return <div> <li>{reply}</li> </div>;
                       })}{" "}
                   </ul>
                 </div>

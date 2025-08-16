@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-export const CommentReply = ({idx, setComments, comments, reply, replies}) => {
+export const CommentReply = ({idx, setComments, comments, reply}) => {
   const [replyInputEnable, setReplyInputEnable] = useState(false);
   const [commentReply, setCommentReply] = useState("");
-  const [commentReplies, setCommentReplies]= useState(reply?.replies);
-
 
   return (
     <div>
@@ -18,10 +16,10 @@ export const CommentReply = ({idx, setComments, comments, reply, replies}) => {
           />
           <button
             onClick={() => {
-            !commentReplies ?  setComments([
+              setComments([
                 ...comments,
                 comments[idx].replies.push(commentReply),
-              ]) : 
+              ]);
               setReplyInputEnable(false);
               setCommentReply("");
             }}
@@ -41,12 +39,6 @@ export const CommentReply = ({idx, setComments, comments, reply, replies}) => {
           reply
         </button>
       )}
-
-      {
-        Boolean(commentReplies) && (
-            <div>test</div>
-        )
-      }
     </div>
   );
 };
