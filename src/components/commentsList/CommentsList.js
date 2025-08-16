@@ -1,38 +1,88 @@
 import { useState } from "react";
 import "./CommentsList.css";
-import { CommentReply } from "../commentReply/CommentReply";
 
-export const CommentsList = ({ comments, setComments }) => {
- 
-  if (!comments.length) {
-    return <>No comments</>
-  }
+const CommentItem = ({ comment, onAddReply, depth = 0 }) => {
+  const [showReplyInput, setShowReplyInput] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
+  const handleAddReply = () => {
+    if (replyText.trim()) {
+      onAddReply(replyText, comment.id);
+      setReplyText("");
+      setShowReplyInput(false);
+    }
+  };
+
   return (
-    <div>
-      <ul className="comments-wrapper">
-        {comments.length > 0 &&
-          comments.map((comment, idx) => {
-          
+    <div className="comment-item" style={{ marginLeft: `${depth * 20}px` }}>
+      <div className="comment-content">
+        <div className="comment-text">{comment.value}</div>
+        <div className="comment-actions">
+          <button 
+            className="reply-btn"
+            onClick={() => setShowReplyInput(!showReplyInput)}
+          >
+            Reply
+          </button>
+        </div>
+      </div>
 
-            return (
-              <div>
-                <div>
-                  <li className="comment">{comment.value}</li>
-                  <ul key={idx}>
-                    {" "}
-                    {Boolean(comment.replies) &&
-                      comment.replies.map((reply) => {
-                        return <div> <li>{reply}</li> </div>;
-                      })}{" "}
-                  </ul>
-                </div>
-               
+      {showReplyInput && (
+        <div className="reply-input-section">
+          <input
+            placeholder="Write a reply..."
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            className="reply-input"
+          />
+          <div className="reply-actions">
+            <button onClick={handleAddReply} className="submit-reply-btn">
+              Submit
+            </button>
+            <button 
+              onClick={() => {
+                setShowReplyInput(false);
+                setReplyText("");
+              }}
+              className="cancel-reply-btn"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
-                <CommentReply key={idx} idx={idx} setComments={setComments} comments={comments}/>
-              </div>
-            );
-          })}
-      </ul>
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="replies-section">
+          {comment.replies.map((reply) => (
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              onAddReply={onAddReply}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const CommentsList = ({ comments, onAddReply }) => {
+  if (!comments.length) {
+    return <div className="no-comments">No comments</div>;
+  }
+
+  return (
+    <div className="comments-wrapper">
+      {comments.map((comment) => (
+        <CommentItem
+          key={comment.id}
+          comment={comment}
+          onAddReply={onAddReply}
+          depth={0}
+        />
+      ))}
     </div>
   );
 };
